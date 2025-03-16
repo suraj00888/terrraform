@@ -1,42 +1,15 @@
 pipeline {
     agent any
-
-    environment {
-        TF_WORKING_DIR = "terraform"
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'destroy-ec2', url: 'https://github.com/suraj00888/terrraform.git'
+                git 'https://github.com/suraj00888/terrraform.git'
             }
         }
-
-        stage('Setup Terraform') {
+        stage('Run Terraform Destroy') {
             steps {
-                sh '''
-                cd $TF_WORKING_DIR
-                terraform init
-                '''
+                bat 'scripts\\destroy.bat'
             }
-        }
-
-        stage('Destroy Terraform') {
-            steps {
-                sh '''
-                cd $TF_WORKING_DIR
-                terraform destroy -auto-approve
-                '''
-            }
-        }
-    }
-
-    post {
-        success {
-            echo "EC2 Instance Destroyed Successfully!"
-        }
-        failure {
-            echo "Terraform Destroy Failed!"
         }
     }
 }
