@@ -2,11 +2,11 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_instance" "ec2_instance" {
-  ami           = "ami-08b5b3a93ed654d19"  # Update to the latest AMI
+resource "aws_instance" "web" {
+  ami           = "ami-08b5b3a93ed654d19"  
   instance_type = "t2.micro"
-
+  
   tags = {
-    Name = "Jenkins-Terraform-EC2"
+    Name = "Jenkins-EC2"
   }
 }
