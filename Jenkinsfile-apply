@@ -1,30 +1,50 @@
 pipeline {
     agent any
+
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key') // Replace with your Jenkins credential ID
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_key') // Replace with your Jenkins credential ID
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/suraj00888/terrraform.git'
+                git branch: 'main', url: 'https://github.com/suraj00888/terrraform.git' // Replace with your repo URL
             }
         }
+
         stage('Terraform Init') {
             steps {
-                bat 'scripts\\init.bat'
+                bat 'terraform init'
             }
         }
+
         stage('Terraform Validate') {
             steps {
-                bat 'scripts\\validate.bat'
+                bat 'terraform validate'
             }
         }
+
         stage('Terraform Plan') {
             steps {
-                bat 'scripts\\plan.bat'
+                bat 'terraform plan -out=tfplan'
             }
         }
+
         stage('Terraform Apply') {
             steps {
-                bat 'scripts\\apply.bat'
+                input message: 'Do you want to apply the Terraform changes?'
+                bat 'terraform apply -auto-approve tfplan'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Terraform apply executed successfully!'
+        }
+        failure {
+            echo 'Terraform apply failed!'
         }
     }
 }
