@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/suraj00888/terrraform.git' // Replace with your repo URL
+                git branch: 'destroy-ec2', url: 'https://github.com/suraj00888/terrraform.git' // Replace with your repo URL
             }
         }
 
