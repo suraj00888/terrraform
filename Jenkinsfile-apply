@@ -1,51 +1,30 @@
 pipeline {
     agent any
-
-    environment {
-        TF_WORKING_DIR = "terraform"
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'apply-ec2', url: 'https://github.com/suraj00888/terrraform.git'
+                git 'https://github.com/suraj00888/terrraform.git'
             }
         }
-
-        stage('Setup Terraform') {
+        stage('Terraform Init') {
             steps {
-                sh '''
-                cd $TF_WORKING_DIR
-                terraform init
-                '''
+                bat 'scripts\\init.bat'
             }
         }
-
-        stage('Plan Terraform') {
+        stage('Terraform Validate') {
             steps {
-                sh '''
-                cd $TF_WORKING_DIR
-                terraform plan -out=tfplan
-                '''
+                bat 'scripts\\validate.bat'
             }
         }
-
-        stage('Apply Terraform') {
+        stage('Terraform Plan') {
             steps {
-                sh '''
-                cd $TF_WORKING_DIR
-                terraform apply -auto-approve
-                '''
+                bat 'scripts\\plan.bat'
             }
         }
-    }
-
-    post {
-        success {
-            echo "EC2 Instance Created Successfully!"
-        }
-        failure {
-            echo "Terraform Apply Failed!"
+        stage('Terraform Apply') {
+            steps {
+                bat 'scripts\\apply.bat'
+            }
         }
     }
 }
