@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/suraj00888/terrraform.git'
+            }
+        }
+        stage('Terraform Init') {
+            steps {
+                bat 'scripts\\init.bat'
+            }
+        }
+        stage('Terraform Validate') {
+            steps {
+                bat 'scripts\\validate.bat'
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                bat 'scripts\\plan.bat'
+            }
+        }
+        stage('Terraform Destroy') {
+            steps {
+                bat 'scripts\\destroy.bat'
+            }
+        }
+    }
+}
