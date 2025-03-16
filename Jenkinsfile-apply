@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        TF_WORKING_DIR = "terraform"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'apply-ec2', url: 'https://github.com/YOUR_GITHUB_USERNAME/terraform-ec2-pipeline.git'
+            }
+        }
+
+        stage('Setup Terraform') {
+            steps {
+                sh '''
+                cd $TF_WORKING_DIR
+                terraform init
+                '''
+            }
+        }
+
+        stage('Plan Terraform') {
+            steps {
+                sh '''
+                cd $TF_WORKING_DIR
+                terraform plan -out=tfplan
+                '''
+            }
+        }
+
+        stage('Apply Terraform') {
+            steps {
+                sh '''
+                cd $TF_WORKING_DIR
+                terraform apply -auto-approve
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "EC2 Instance Created Successfully!"
+        }
+        failure {
+            echo "Terraform Apply Failed!"
+        }
+    }
+}
